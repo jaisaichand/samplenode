@@ -10,7 +10,29 @@ const mongoose = require('mongoose');
 
 const multer = require('multer');
 
-const upload = multer({ dest: 'uploads/' });
+const fileFilter = (req,file,cb) => {
+    if(file.mimetype==='image/jpeg'||file.mimetype==='image/png'||file.mimetype==='image/jpg'){
+        cb(null,true);
+    }
+    else{
+        cb(null,false);
+    }
+}
+
+const storage = multer.diskStorage({
+    destination: function (req,file,cb){
+        cb(null,'uploads')
+    },
+    filename: function (req,file,cb){
+        cb(null, new Date().toISOString().replace(/:/g, '-')+file.originalname);
+    }
+})
+
+const upload = multer({storage:storage, limits: {
+    fileSize: 1024*1024*5
+},
+fileFilter: fileFilter
+});
 
 router.get('/', (req, res, next) => {
     console.log('got request to' + req);
@@ -81,12 +103,13 @@ router.delete('/dummy/:dummyid', (req, res, next) => {
 
 router.post('/dummy', upload.single('postImage'), (req, res, next) => {
     console.log('got request to' + req);
-    console.log(req);
+   // console.log(req);
     console.log(req.file);
 
     const savedummy = new dummyModel({
         data: req.body.data,
-        _id: mongoose.Types.ObjectId()
+        _id: mongoose.Types.ObjectId(),
+        image: req.file.path
     }).save().then((result) => {
         res.status(200).json(
             {

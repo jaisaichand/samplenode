@@ -23,6 +23,8 @@ app.use(bodyParser.json());
 app.use('/posts', posts);   //here only the requests that comes to /posts only will be passed on to posts handler
 app.use('/comments', comments);
 
+app.use('/uploads', express.static('uploads'));
+
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Header',
