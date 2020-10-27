@@ -12,8 +12,12 @@ const posts = require('./api/routes/post');
 
 const comments = require('./api/routes/comments');
 
+const userr = require('./api/routes/user');
+
 mongoose.connect('mongodb+srv://jaithethope:Elonmusk@cluster0.iwj9o.mongodb.net/<dbname>?retryWrites=true&w=majority'
-    , { useNewUrlParser: true, useUnifiedTopology: true })
+    , { useNewUrlParser: true, useUnifiedTopology: true }).then().catch((err)=>{
+        console.log(err)
+    })
 
 
 
@@ -22,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/posts', posts);   //here only the requests that comes to /posts only will be passed on to posts handler
 app.use('/comments', comments);
+app.use('/user', userr);
 
 app.use('/uploads', express.static('uploads'));
 
